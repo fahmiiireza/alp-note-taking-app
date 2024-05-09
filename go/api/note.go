@@ -39,12 +39,59 @@ func getNote(c *gin.Context) {
 }
 func createNote(c *gin.Context) {
 	// Create a note
+	var noteRequest NoteRequest
+	var note db.Note
+
+	if err := c.BindJSON(&noteRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
+	}
+	note = db.Note{
+		Title: noteRequest.Title,
+		Body:  noteRequest.Body,
+	}
+
+	if err := db.GetDB().Create(&note).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"note": note,
+	})
 }
 
 func updateNote(c *gin.Context) {
 	// Update a note
+	var noteRequest NoteUpdateRequest
+	var note db.Note
+	id := c.Param("id")
+
+	if err := c.BindJSON(&noteRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
+	}
+	result := db.GetDB().First(&note, id)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+		return
+	}
+	if err := db.GetDB().Model(&note).Updates(noteRequest).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 }
 
 func deleteNote(c *gin.Context) {
 	// Delete a note
+	var note db.Note
+	id := c.Param("id")
+	result := db.GetDB().Delete(&note, id)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
 }
