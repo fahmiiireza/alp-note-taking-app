@@ -10,6 +10,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/joho/godotenv"
 )
 
 var dbInstance *gorm.DB
@@ -17,7 +18,11 @@ var dbInstance *gorm.DB
 func ConnectDB() {
 	// Connect to the database
 	var err error
-	dsn := os.Getenv("DB_URL") + "?sslmode=disable"
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	dsn := os.Getenv("DB_URL")
 	dbInstance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {

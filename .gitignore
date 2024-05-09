@@ -1,0 +1,89 @@
+### Flutter ###
+# Flutter/Dart/Pub related
+/flutter/doc/api/
+/flutter/.dart_tool/
+/flutter/.flutter-plugins
+/flutter/.flutter-plugins-dependencies
+/flutter/.fvm/flutter_sdk
+/flutter/.packages
+/flutter/.pub-cache/
+/flutter/.pub/
+/flutter/build/
+/flutter/coverage/
+/flutter/lib/generated_plugin_registrant.dart
+# For library packages, don’t commit the pubspec.lock file.
+# Regenerating the pubspec.lock file lets you test your package against the latest compatible versions of its dependencies.
+# See https://dart.dev/guides/libraries/private-files#pubspeclock
+#/flutter/pubspec.lock
+
+# Android related
+/flutter/android/**/gradle-wrapper.jar
+/flutter/android/.gradle
+/flutter/android/captures/
+/flutter/android/gradlew
+/flutter/android/gradlew.bat
+/flutter/android/key.properties
+/flutter/android/local.properties
+/flutter/android/**/GeneratedPluginRegistrant.java
+
+# iOS/XCode related
+/flutter/ios/**/*.mode1v3
+/flutter/ios/**/*.mode2v3
+/flutter/ios/**/*.moved-aside
+/flutter/ios/**/*.pbxuser
+/flutter/ios/**/*.perspectivev3
+/flutter/ios/**/*sync/
+/flutter/ios/**/.sconsign.dblite
+/flutter/ios/**/.tags*
+/flutter/ios/**/.vagrant/
+/flutter/ios/**/DerivedData/
+/flutter/ios/**/Icon?
+/flutter/ios/**/Pods/
+/flutter/ios/**/.symlinks/
+/flutter/ios/**/profile
+/flutter/ios/**/xcuserdata
+/flutter/ios/.generated/
+/flutter/ios/Flutter/.last_build_id
+/flutter/ios/Flutter/App.framework
+/flutter/ios/Flutter/Flutter.framework
+/flutter/ios/Flutter/Flutter.podspec
+/flutter/ios/Flutter/Generated.xcconfig
+/flutter/ios/Flutter/app.flx
+/flutter/ios/Flutter/app.zip
+/flutter/ios/Flutter/flutter_assets/
+/flutter/ios/Flutter/flutter_export_environment.sh
+/flutter/ios/ServiceDefinitions.json
+/flutter/ios/Runner/GeneratedPluginRegistrant.*
+
+# Exceptions to above rules.
+!/flutter/ios/**/default.mode1v3
+!/flutter/ios/**/default.mode2v3
+!/flutter/ios/**/default.pbxuser
+!/flutter/ios/**/default.perspectivev3
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+### Go ###
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+/go/*.exe
+/go/*.exe~
+/go/*.dll
+/go/*.so
+/go/*.dylib
+
+# Test binary, built with `go test -c`
+/go/*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+/go/*.out
+
+# Dependency directories (remove the comment below to include it)
+# /go/vendor/
+
+# Go workspace file
+/go/go.work
+
+# End of https://www.toptal.com/developers/gitignore/api/go,flutter
+go/.env

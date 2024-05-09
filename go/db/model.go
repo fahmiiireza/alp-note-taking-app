@@ -1,7 +1,10 @@
 package db
 
+import "gorm.io/gorm"
+
 type Note struct {
-	ID    uint   `json:"id" gorm:"primaryKey"`
+	gorm.Model
+
 	Title string `json:"title"`
 	Body  string `json:"body"`
 }
