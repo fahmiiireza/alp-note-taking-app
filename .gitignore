@@ -1,65 +1,65 @@
 ### Flutter ###
 # Flutter/Dart/Pub related
-/flutter/doc/api/
-/flutter/.dart_tool/
-/flutter/.flutter-plugins
-/flutter/.flutter-plugins-dependencies
-/flutter/.fvm/flutter_sdk
-/flutter/.packages
-/flutter/.pub-cache/
-/flutter/.pub/
-/flutter/build/
-/flutter/coverage/
-/flutter/lib/generated_plugin_registrant.dart
+/frontend/doc/api/
+/frontend/.dart_tool/
+/frontend/.flutter-plugins
+/frontend/.flutter-plugins-dependencies
+/frontend/.fvm/flutter_sdk
+/frontend/.packages
+/frontend/.pub-cache/
+/frontend/.pub/
+/frontend/build/
+/frontend/coverage/
+/frontend/lib/generated_plugin_registrant.dart
 # For library packages, don’t commit the pubspec.lock file.
 # Regenerating the pubspec.lock file lets you test your package against the latest compatible versions of its dependencies.
 # See https://dart.dev/guides/libraries/private-files#pubspeclock
 #/flutter/pubspec.lock
 
 # Android related
-/flutter/android/**/gradle-wrapper.jar
-/flutter/android/.gradle
-/flutter/android/captures/
-/flutter/android/gradlew
-/flutter/android/gradlew.bat
-/flutter/android/key.properties
-/flutter/android/local.properties
-/flutter/android/**/GeneratedPluginRegistrant.java
+/frontend/android/**/gradle-wrapper.jar
+/frontend/android/.gradle
+/frontend/android/captures/
+/frontend/android/gradlew
+/frontend/android/gradlew.bat
+/frontend/android/key.properties
+/frontend/android/local.properties
+/frontend/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related
-/flutter/ios/**/*.mode1v3
-/flutter/ios/**/*.mode2v3
-/flutter/ios/**/*.moved-aside
-/flutter/ios/**/*.pbxuser
-/flutter/ios/**/*.perspectivev3
-/flutter/ios/**/*sync/
-/flutter/ios/**/.sconsign.dblite
-/flutter/ios/**/.tags*
-/flutter/ios/**/.vagrant/
-/flutter/ios/**/DerivedData/
-/flutter/ios/**/Icon?
-/flutter/ios/**/Pods/
-/flutter/ios/**/.symlinks/
-/flutter/ios/**/profile
-/flutter/ios/**/xcuserdata
-/flutter/ios/.generated/
-/flutter/ios/Flutter/.last_build_id
-/flutter/ios/Flutter/App.framework
-/flutter/ios/Flutter/Flutter.framework
-/flutter/ios/Flutter/Flutter.podspec
-/flutter/ios/Flutter/Generated.xcconfig
-/flutter/ios/Flutter/app.flx
-/flutter/ios/Flutter/app.zip
-/flutter/ios/Flutter/flutter_assets/
-/flutter/ios/Flutter/flutter_export_environment.sh
-/flutter/ios/ServiceDefinitions.json
-/flutter/ios/Runner/GeneratedPluginRegistrant.*
+/frontend/ios/**/*.mode1v3
+/frontend/ios/**/*.mode2v3
+/frontend/ios/**/*.moved-aside
+/frontend/ios/**/*.pbxuser
+/frontend/ios/**/*.perspectivev3
+/frontend/ios/**/*sync/
+/frontend/ios/**/.sconsign.dblite
+/frontend/ios/**/.tags*
+/frontend/ios/**/.vagrant/
+/frontend/ios/**/DerivedData/
+/frontend/ios/**/Icon?
+/frontend/ios/**/Pods/
+/frontend/ios/**/.symlinks/
+/frontend/ios/**/profile
+/frontend/ios/**/xcuserdata
+/frontend/ios/.generated/
+/frontend/ios/Flutter/.last_build_id
+/frontend/ios/Flutter/App.framework
+/frontend/ios/Flutter/Flutter.framework
+/frontend/ios/Flutter/Flutter.podspec
+/frontend/ios/Flutter/Generated.xcconfig
+/frontend/ios/Flutter/app.flx
+/frontend/ios/Flutter/app.zip
+/frontend/ios/Flutter/flutter_assets/
+/frontend/ios/Flutter/flutter_export_environment.sh
+/frontend/ios/ServiceDefinitions.json
+/frontend/ios/Runner/GeneratedPluginRegistrant.*
 
 # Exceptions to above rules.
-!/flutter/ios/**/default.mode1v3
-!/flutter/ios/**/default.mode2v3
-!/flutter/ios/**/default.pbxuser
-!/flutter/ios/**/default.perspectivev3
+!/frontend/ios/**/default.mode1v3
+!/frontend/ios/**/default.mode2v3
+!/frontend/ios/**/default.pbxuser
+!/frontend/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 ### Go ###
