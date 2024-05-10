@@ -18,9 +18,7 @@ func getAllNote(c *gin.Context) {
 		return
 
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"notes": notes,
-	})
+	c.JSON(http.StatusOK, notes)
 }
 
 func getNote(c *gin.Context) {
@@ -81,6 +79,9 @@ func updateNote(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{
+		"note": note,
+	})
 
 }
 

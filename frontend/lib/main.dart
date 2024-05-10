@@ -1,125 +1,343 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Note Taking App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: NoteList(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class NoteList extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _NoteListState createState() => _NoteListState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _NoteListState extends State<NoteList> {
+  List<dynamic> notes = [];
+  List<dynamic> selectedNotes = [];
+  bool isSelectionMode = false;
 
-  void _incrementCounter() {
+  Future<void> fetchNotes() async {
+    final response = await http.get(Uri.parse('http://localhost:8080/notes'));
+    if (response.statusCode == 200) {
+      setState(() {
+        notes = jsonDecode(response.body);
+      });
+    } else {
+      throw Exception('Failed to load notes');
+    }
+  }
+
+  Future<void> deleteSelectedNotes() async {
+    for (var note in selectedNotes) {
+      final response = await http.delete(Uri.parse('http://localhost:8080/notes/${note['id']}'));
+      if (response.statusCode == 204) {
+        setState(() {
+          notes.remove(note);
+        });
+      } else {
+        throw Exception('Failed to delete note');
+      }
+    }
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      selectedNotes.clear();
+      isSelectionMode = false;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchNotes();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        title: Text('Note List'),
+        actions: [
+          if (!isSelectionMode)
+            IconButton(
+              icon: Icon(Icons.select_all),
+              onPressed: () {
+                setState(() {
+                  isSelectionMode = true;
+                  selectedNotes = List.from(notes);
+                });
+              },
             ),
+          if (isSelectionMode)
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: deleteSelectedNotes,
+            ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: notes.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(notes[index]['title']),
+            subtitle: Text(notes[index]['body']),
+            onTap: () {
+              if (isSelectionMode) {
+                setState(() {
+                  if (selectedNotes.contains(notes[index])) {
+                    selectedNotes.remove(notes[index]);
+                  } else {
+                    selectedNotes.add(notes[index]);
+                  }
+                });
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NoteDetail(
+                      id: notes[index]['ID'],
+                      note: notes[index],
+                      refreshNotes: fetchNotes, // Pass the callback function
+                    ),
+                  ),
+                );
+              }
+            },
+            leading: isSelectionMode
+                ? Checkbox(
+                    value: selectedNotes.contains(notes[index]),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value!) {
+                          selectedNotes.add(notes[index]);
+                        } else {
+                          selectedNotes.remove(notes[index]);
+                        }
+                      });
+                    },
+                  )
+                : null,
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddNote(
+                refreshNotes: fetchNotes, // Pass the callback function
+              ),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class NoteDetail extends StatelessWidget {
+  final dynamic note;
+  final int id;
+  final Function refreshNotes;
+  NoteDetail({required this.note, required this.id, required this.refreshNotes});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Note Detail'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UpdateNoteScreen(
+                    note: note,
+                    id: note['ID'],
+                    refreshNotes: refreshNotes, // Pass the callback function
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              note['title'],
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10.0),
+            Text(note['body']),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UpdateNoteScreen extends StatefulWidget {
+  final dynamic note;
+  final int id;
+  final Function refreshNotes;
+  UpdateNoteScreen({required this.note, required this.id, required this.refreshNotes});
+
+  @override
+  _UpdateNoteScreenState createState() => _UpdateNoteScreenState();
+}
+
+class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.note['title']);
+    _contentController = TextEditingController(text: widget.note['body']);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Note'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+            ),
+            SizedBox(height: 10.0),
+            TextField(
+              controller: _contentController,
+              decoration: InputDecoration(labelText: 'Content'),
+              maxLines: null,
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () async {
+                final response = await http.patch(
+                  Uri.parse('http://localhost:8080/notes/${widget.id}'),
+                  body: jsonEncode({
+                    'title': _titleController.text,
+                    'body': _contentController.text,
+                  }),
+                  headers: {'Content-Type': 'application/json'},
+                );
+
+                if (response.statusCode == 200) {
+                  widget.refreshNotes(); // Refresh notes after update
+                  Navigator.pop(context);
+                } else {
+                  throw Exception('Failed to update note');
+                }
+              },
+              child: Text('Save'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class AddNote extends StatefulWidget {
+  final Function refreshNotes;
+  AddNote({required this.refreshNotes});
+
+  @override
+  _AddNoteState createState() => _AddNoteState();
+}
+
+class _AddNoteState extends State<AddNote> {
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController();
+    _contentController = TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Note'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+            ),
+            SizedBox(height: 10.0),
+            TextField(
+              controller: _contentController,
+              decoration: InputDecoration(labelText: 'Content'),
+              maxLines: null,
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () async {
+                final response = await http.post(
+                  Uri.parse('http://localhost:8080/notes'),
+                  body: jsonEncode({
+                    'title': _titleController.text,
+                    'body': _contentController.text,
+                  }),
+                  headers: {'Content-Type': 'application/json'},
+                );
+                if (response.statusCode == 201) {
+                  widget.refreshNotes(); // Refresh notes after adding
+                  Navigator.pop(context);
+                } else {
+                  throw Exception('Failed to add note');
+                }
+              },
+              child: Text('Add Note'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
   }
 }
